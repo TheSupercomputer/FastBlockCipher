@@ -1,7 +1,3 @@
-//
-// Created by marcel on 18.05.21.
-//
-
 #ifndef FASTBLOCKCIPHER_HPP
 #define FASTBLOCKCIPHER_HPP
 
