@@ -1,7 +1,3 @@
-//
-// Created by marcel on 18.05.21.
-//
-
 #include "cipher.hpp"
 
 cipher::cipher() {
