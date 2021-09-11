@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 #include <thread>
+#include <numeric>
+#include <algorithm>
 
 class cipher {
 

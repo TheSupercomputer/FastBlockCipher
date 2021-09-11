@@ -29,62 +29,28 @@ void cipher::set_key(std::array<uint8_t, 256> key) {
 }
 
 std::array<uint8_t, 256> cipher::generate_key() {
-
-	std::vector<uint8_t> characters(256);
-	uint16_t index = 0;
-
-	do {
-		characters[index] = index;
-		index++;
-	} while (index  < 256);
-
-	std::array<uint8_t, 256> output {};
+	std::array<uint8_t, 256> output{};
+	std::iota(output.begin(), output.end(), 0);
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
-
-	index = 0;
-	uint8_t i;
-	// Generate random numbers in the limits of the vector size
-	// Reducing the upper limit accordingly to the shrinking vector.
-	do {
-		std::uniform_int_distribution<> dist(0, 255-index);
-		i = dist(gen);
-
-		output[index] = characters[i];
-		characters.erase(characters.begin() + i);
-
-		index++;
-	} while (index < 256);
+	
+	std::shuffle(output.begin(), output.end(), gen);
 	return output;
 }
 
 void cipher::generate_encryption_table() {
-	uint16_t index_outer = 0;
-	uint16_t index_inner;
-	do {
-		index_inner = 0;
-		do {
+	for(size_t index_outer = 0; index_outer < 256; index_outer++)
+		for(size_t index_inner = 0; index_inner < 256; index_inner++) {
 			encryption_table[index_outer][(index_outer+index_inner)%256] = KEY[index_inner];
-			index_inner++;
-		} while(index_inner < 256);
-
-		index_outer++;
-	} while (index_outer < 256);
+		}
 }
 
 void cipher::generate_decryption_table() {
-	uint16_t index_outer = 0;
-	uint16_t index_inner;
-	do {
-		index_inner = 0;
-		do {
+	for(size_t index_outer = 0; index_outer < 256; index_outer++)
+		for(size_t index_inner = 0; index_inner < 256; index_inner++) {
 			decryption_table[index_outer][encryption_table[index_outer][index_inner]] = index_inner;
-			index_inner++;
-		} while(index_inner < 256);
-
-		index_outer++;
-	} while (index_outer < 256);
+		}
 
 }
 
@@ -122,25 +88,21 @@ std::vector<uint8_t> cipher::encrypt(std::vector<uint8_t> &data) {
 }
 
 void cipher::encrypt_t(std::vector<uint8_t> &data, uint16_t runs) {
-	uint16_t run_count = 0;
-
-	size_t index;
 	size_t size = data.size();
 	uint8_t table_index = encryption_table[0][size%256];
 	data.reserve(size + runs);
 
-	do {
-		index = 0;
+	for(size_t run_count = 0; run_count < runs; run_count++) {
 		data.push_back(encryption_table[1][table_index]);
-		do {
+		
+		for(size_t index = 0; index < size; index++) {
 			data[index] = encryption_table[table_index][data[index]];
 			table_index += data[index];
 			table_index++;
-			index++;
-		}while(index < size);
-		run_count++;
+		}
+		
 		size++;
-	} while(run_count < runs);
+	}
 }
 
 std::vector<uint8_t> cipher::decrypt(std::vector<uint8_t> &data) {
@@ -179,27 +141,22 @@ std::vector<uint8_t> cipher::decrypt(std::vector<uint8_t> &data) {
 }
 
 void cipher::decrypt_t(std::vector<uint8_t> &data, uint16_t runs) {
-	uint16_t run_count = 0;
-
-	size_t index;
 	size_t size = data.size();
 	uint8_t table_index;
 	uint8_t table_index_buff;
 
-	do {
-		run_count++;
+	for(size_t run_count = 0; run_count < runs; run_count++) {
 		table_index = decryption_table[1][data.back()];
 		data.pop_back();
 		size--;
-		index = 0;
-		do {
+		
+		for(size_t index = 0; index < size; index++) {
 			table_index_buff = data[index];
 			data[index] = decryption_table[table_index][data[index]];
 			table_index += table_index_buff;
 			table_index++;
-			index++;
-		}while(index < size);
-	} while(run_count < runs);
+		}
+	}
 }
 
 void cipher::set_runs(uint16_t runs) {
