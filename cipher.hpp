@@ -13,9 +13,9 @@ class cipher {
 	std::array<std::array<uint8_t, 256>, 256> encryption_table;
 	std::array<std::array<uint8_t, 256>, 256> decryption_table;
 
-	std::array<uint8_t, 256> 		KEY;
-	uint16_t						RUNS;
-	uint16_t 						THREADS;
+	std::array<uint8_t, 256> 	KEY;
+	uint16_t			RUNS;
+	uint16_t 			THREADS;
 
 	std::array<uint8_t, 256> generate_key();
 
@@ -29,7 +29,7 @@ class cipher {
 	void merge_data(std::vector<std::vector<uint8_t>> &thread_data, std::vector<uint8_t> &data);
 
 public:
-
+	// Default constructor will generate a key automatically.
 	cipher();
 	cipher(std::array<uint8_t, 256> key);
 	~cipher() = default;
