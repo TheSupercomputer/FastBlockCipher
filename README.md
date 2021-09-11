@@ -6,7 +6,7 @@ This is more like a PoC than a safe cipher algorithm, until proven other.
 It was primarily intended to practice file I/O and multi threading on an project which is not purely theoretically and therefore FastBlockCipher should be handled as such a side project with no real intention. At least for now.
 It might grow in future, if it become useful but. I doubt it will.
 
-Nevertheless it will become some feature updates on an irregular basis.
+Nevertheless it will get some feature updates on an irregular basis.
 
 cipher.cpp and cipher.hpp do contain the cipher class.
 main.cpp has an example implementation in it. 
